@@ -27,7 +27,7 @@ end
 
 fantasy_football_metrics_client = Opportunist::FantasyFootballMetricsClient.new(options[:position])
 nfl_fantasy_client = Opportunist::NflFantasyClient.new(options[:username], options[:password],
-  options[:'league'], options[:position])
+  options[:league], options[:position])
 
 ranked_players = fantasy_football_metrics_client.players
 available_players = nfl_fantasy_client.players
