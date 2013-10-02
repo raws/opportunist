@@ -15,13 +15,14 @@ module Opportunist
       @username = username
       @password = password
       @league_id = league_id
-      @position = position
+      @position = position.to_sym
       @agent = Mechanize.new
     end
 
-    def available_players
-      @available_players ||= table_rows.map do |row|
-        row.at_css('td.playerNameAndInfo a.playerName').content.strip
+    def players
+      @players ||= table_rows.map do |row|
+        name = row.at_css('td.playerNameAndInfo a.playerName').content.strip
+        Player.new(name)
       end
     end
 

@@ -1,9 +1,40 @@
 #!/usr/bin/env ruby
 
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'opportunist'
 require 'bundler/setup'
-require 'pp'
+require 'formatador'
+require 'opportunist'
+require 'slop'
 
-client = Opportunist::FantasyFootballMetricsClient.new(:wide_receiver)
-pp client.players
+HUMANIZED_POSITIONS = {
+  defense: 'defense squads',
+  kicker: 'kickers',
+  quarterback: 'quarterbacks',
+  running_back: 'running backs',
+  tight_end: 'tight ends',
+  wide_receiver: 'wide receivers'
+}
+
+options = Slop.parse(help: true) do
+  banner 'usage: opportunist --username foo --password s3cr3t --position quarterback'
+
+  on 'u', 'username', 'Your nfl.com username', argument: true, required: true
+  on 'p', 'password', 'Your nfl.com password', argument: true, required: true
+  on 'l', 'league', 'Your nfl.com fantasy league ID', argument: true, required: true
+  on 'o', 'position', 'Player position (quarterback, running_back, wide_receiver, tight_end, ' +
+    'kicker, defense)', argument: true, required: true
+end
+
+fantasy_football_metrics_client = Opportunist::FantasyFootballMetricsClient.new(options[:position])
+nfl_fantasy_client = Opportunist::NflFantasyClient.new(options[:username], options[:password],
+  options[:'league'], options[:position])
+
+ranked_players = fantasy_football_metrics_client.players
+available_players = nfl_fantasy_client.players
+players = ranked_players & available_players
+
+humanized_position = HUMANIZED_POSITIONS[options[:position].to_sym]
+Formatador.display_line "[bold]Best available [green]#{humanized_position}:[/]\n"
+
+table_data = players.map(&:to_hash)
+Formatador.display_table(table_data, [:rank, :name])

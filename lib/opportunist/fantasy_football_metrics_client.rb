@@ -12,16 +12,17 @@ module Opportunist
 
     def initialize(position)
       @agent = Mechanize.new
-      @position = position
+      @position = position.to_sym
     end
 
     def players
       @players ||= table_rows.map do |row|
+        rank = row[0].content.to_i
         name = row[3].content.match(/([^,]+),\s*(\S+)/) do |match|
-          { first: match[2], last: match[1], full: "#{match[2]} #{match[1]}" }
+          "#{match[2]} #{match[1]}"
         end
 
-        { name: name }
+        RankedPlayer.new(name, rank)
       end
     end
 

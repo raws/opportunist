@@ -3,6 +3,7 @@ GEM
   specs:
     domain_name (0.5.13)
       unf (>= 0.0.5, < 1.0.0)
+    formatador (0.2.4)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     mechanize (2.7.2)
@@ -21,6 +22,7 @@ GEM
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
     ntlm-http (0.1.1)
+    slop (3.4.6)
     unf (0.1.2)
       unf_ext
     unf_ext (0.0.6)
@@ -30,4 +32,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  formatador (~> 0.2.4)
   mechanize (~> 2.7.2)
+  slop (~> 3.4.6)
